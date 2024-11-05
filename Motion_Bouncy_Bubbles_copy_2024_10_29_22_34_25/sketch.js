@@ -1,14 +1,14 @@
 /*
- * @name Bouncy Bubbles
- * @arialabel Grey circles of varying sizes bounce off the sides of the canvas and each other, eventually settling on the bottom of the screen
+ * @name Bouncy Bubbles with Colors
+ * @arialabel Colorful circles of varying sizes bounce off the sides of the canvas and each other, eventually settling on the bottom of the screen
  * @frame 720,400
- * @description  based on code from Keith Peters. Multiple-object collision..
+ * @description Modified version with colorful bouncing balls and higher gravity.
  */
 
-let numBalls = 13;
+let numBalls = 20; // Increased number of balls
 let spring = 0.05;
-let gravity = 0.03;
-let friction = -0.9;
+let gravity = 0.1; // Increased gravity for faster falling
+let friction = -0.8; // Reduced friction for higher bounces
 let balls = [];
 
 function setup() {
@@ -17,13 +17,13 @@ function setup() {
     balls[i] = new Ball(
       random(width),
       random(height),
-      random(30, 70),
+      random(20, 60), // Reduced ball size range
       i,
-      balls
+      balls,
+      color(random(255), random(255), random(255)) // Random color for each ball
     );
   }
   noStroke();
-  fill(255, 204);
 }
 
 function draw() {
@@ -36,7 +36,7 @@ function draw() {
 }
 
 class Ball {
-  constructor(xin, yin, din, idin, oin) {
+  constructor(xin, yin, din, idin, oin, col) {
     this.x = xin;
     this.y = yin;
     this.vx = 0;
@@ -44,19 +44,16 @@ class Ball {
     this.diameter = din;
     this.id = idin;
     this.others = oin;
+    this.color = col; // Store color
   }
 
   collide() {
     for (let i = this.id + 1; i < numBalls; i++) {
-      // console.log(others[i]);
       let dx = this.others[i].x - this.x;
       let dy = this.others[i].y - this.y;
       let distance = sqrt(dx * dx + dy * dy);
       let minDist = this.others[i].diameter / 2 + this.diameter / 2;
-      //   console.log(distance);
-      //console.log(minDist);
       if (distance < minDist) {
-        //console.log("2");
         let angle = atan2(dy, dx);
         let targetX = this.x + cos(angle) * minDist;
         let targetY = this.y + sin(angle) * minDist;
@@ -91,6 +88,7 @@ class Ball {
   }
 
   display() {
+    fill(this.color); // Use the ball's color
     ellipse(this.x, this.y, this.diameter, this.diameter);
   }
 }
